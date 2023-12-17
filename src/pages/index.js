@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 
 const Home = () => {
   const [STEP_1, STEP_2, STEP_3, STEP_4, STEP_5] = [1, 2, 3, 4, 5];
-  const [step, setStep] = useState(STEP_2);
+  const [step, setStep] = useState(STEP_1);
 
   // STEP 1 CODE
   const formik = useFormik({
