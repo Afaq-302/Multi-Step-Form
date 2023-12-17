@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import React from 'react';
 import { useFormik } from 'formik';
@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 
 const Home = () => {
   const [STEP_1, STEP_2, STEP_3, STEP_4, STEP_5] = [1, 2, 3, 4, 5];
+  const CURRENCY = "$"
   const [step, setStep] = useState(STEP_1);
 
   // STEP 1 CODE
@@ -32,7 +33,55 @@ const Home = () => {
   });
 
   // STEP 2 CODE
+  const [selectedPlan, setSelectedPlan] = useState('arcade');
+  const [selectedValue, setSelectedValue] = useState(9);
+  const [isToggled, setIsToggled] = useState(false);
 
+  const plans = isToggled
+    ? {
+      arcade: 90,
+      advanced: 120,
+      pro: 150
+    }
+    : {
+      arcade: 9,
+      advanced: 12,
+      pro: 15
+    };
+
+  const duration = isToggled ? 'yr' : 'mo';
+  const handleCheckboxChange = () => {
+    setIsToggled((prev) => !prev);
+  };
+
+  const handlePlanSelection = (plan, value) => {
+    setSelectedPlan(plan);
+    setSelectedValue(value);
+    console.log("After setting", selectedPlan, selectedValue)
+  };
+
+  // STEP 3 CODE
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
+
+  const handleFeatureSelection = (feature) => {
+    const isSelected = selectedFeatures.some((selected) => selected.feature === feature.feature);
+
+    if (isSelected) {
+      setSelectedFeatures(selectedFeatures.filter((selected) => selected.feature !== feature.feature));
+    } else {
+      setSelectedFeatures([...selectedFeatures, feature]);
+    }
+
+  };
+
+  const featureData = [
+    { feature: 'Online service', description: 'Access to multiplayer games', value: 10 },
+    { feature: 'Larger Storage', description: 'Extra 1TB of cloud save', value: 20 },
+    { feature: 'Customizable profile', description: 'Custom theme on your profile', value: 20 },
+  ];
+  const checkboxRefs = Array.from({ length: featureData.length }, () => React.createRef());
+
+  // STEP 4 CODE
 
 
   return (
@@ -222,6 +271,7 @@ const Home = () => {
                 className={`step2 w-[411px] h-[429px] ${step == STEP_2 ? "" : "hidden"
                   }`}
               >
+
                 <h2 className="text-3xl font-bold text-[#02295a] mb-2">
                   Select your plan
                 </h2>
@@ -230,7 +280,11 @@ const Home = () => {
                 </p>
 
                 <div className="flex flex-row mt-10">
-                  <div className="plan-box flex flex-col px-4 py-5 mr-3 rounded-xl border-2 border-[#d6d9e6]  hover:border-2 hover:border-[#473dff]">
+                  <div
+                    className={`plan-box flex flex-col px-4 py-5 mr-3 rounded-xl hover:border-2 hover:border-[#473dff] cursor-pointer ${selectedPlan === 'arcade' ? 'bg-[#f0f6ff] border-2 border-[#473dff]' : 'border-2 border-[#d6d9e6]  '
+                      }`}
+                    onClick={() => handlePlanSelection('arcade', plans.arcade)}
+                  >
                     <Image
                       src="assets/images/icon-arcade.svg"
                       width={40}
@@ -241,13 +295,17 @@ const Home = () => {
                     <h3 className="text-[#02295a] font-semibold mt-5">
                       Arcade
                     </h3>
-                    <p className="mt-1 text-[#9699ab]">$9/mo</p>
-                    <div className="text-[13px] opacity-100 transition-opacity font-medium text-[#02295a] ">
+                    <p className="mt-1 text-[#9699ab]">{CURRENCY + plans.arcade}/{duration}</p>
+                    <div className={`text-[13px] transition-opacity font-medium text-[#02295a] ${isToggled ? 'opacity-100' : 'opacity-0'}`}>
                       2 months free
                     </div>
                   </div>
 
-                  <div className="plan-box  flex flex-col px-4 py-5 mr-3 rounded-xl border-2 border-[#d6d9e6]  hover:border-2 hover:border-[#473dff]">
+                  <div
+                    className={`plan-box flex flex-col px-4 py-5 mr-3 rounded-xl hover:border-2 hover:border-[#473dff] cursor-pointer ${selectedPlan === 'advanced' ? 'bg-[#f0f6ff] border-2 border-[#473dff]' : 'border-2 border-[#d6d9e6]  '
+                      }`}
+                    onClick={() => handlePlanSelection('advanced', plans.advanced)}
+                  >
                     <Image
                       src="assets/images/icon-advanced.svg"
                       width={40}
@@ -258,13 +316,17 @@ const Home = () => {
                     <h3 className="text-[#02295a] font-semibold mt-5">
                       Advanced
                     </h3>
-                    <p className="mt-1 text-[#9699ab]">$12/mo</p>
-                    <div className="text-[13px] opacity-100 transition-opacity font-medium text-[#02295a] ">
+                    <p className="mt-1 text-[#9699ab]">{CURRENCY + plans.advanced}/{duration}</p>
+                    <div className={`text-[13px] transition-opacity font-medium text-[#02295a] ${isToggled ? 'opacity-100' : 'opacity-0'}`}>
                       2 months free
                     </div>
                   </div>
 
-                  <div className="plan-box  flex flex-col px-4 py-5 mr-3 rounded-xl border-2 border-[#d6d9e6]  hover:border-2 hover:border-[#473dff]">
+                  <div
+                    className={`plan-box flex flex-col px-4 py-5 mr-3 rounded-xl hover:border-2 hover:border-[#473dff] cursor-pointer ${selectedPlan === 'pro' ? 'bg-[#f0f6ff] border-2 border-[#473dff]' : 'border-2 border-[#d6d9e6]'
+                      }`}
+                    onClick={() => handlePlanSelection('pro', plans.pro)}
+                  >
                     <Image
                       src="assets/images/icon-pro.svg"
                       width={40}
@@ -273,8 +335,8 @@ const Home = () => {
                       className="mr-8"
                     />
                     <h3 className="text-[#02295a] font-semibold mt-5">Pro</h3>
-                    <p className="mt-1 text-[#9699ab]">$15/mo</p>
-                    <div className="text-[13px] opacity-100 transition-opacity font-medium text-[#02295a] ">
+                    <p className="mt-1 text-[#9699ab]">{CURRENCY + plans.pro}/{duration}</p>
+                    <div className={`text-[13px] transition-opacity font-medium text-[#02295a] ${isToggled ? 'opacity-100' : 'opacity-0'}`}>
                       2 months free
                     </div>
                   </div>
@@ -288,7 +350,7 @@ const Home = () => {
 
                     <div className="relative inline-block mx-4">
                       <label className="switch">
-                        <input type="checkbox" />
+                        <input type="checkbox" checked={isToggled} onChange={handleCheckboxChange} />
                         <span className="slider round"></span>
                       </label>
                     </div>
@@ -329,9 +391,44 @@ const Home = () => {
 
                 <div className="mt-6">
                   {/* ##### CHECKBOX CONTAINER #####*/}
-                  <div>
-                    {/* Checkbox  */}
-                    <div className="check-box mx-auto py-4 px-7 bg-white rounded-lg border-2 border-[#d6d9e6] cursor-pointer hover:border-2 hover:border-[#473dff] focus:bg-[#f0f6ff] mb-4">
+                  {/* Checkbox  */}
+                  {featureData.map((feature, index) => {
+                    const isSelectedFeature = selectedFeatures.some((selected) => selected.feature === feature.feature);
+
+                    return (
+                      <div
+                        key={index}
+                        className={`check-box mx-auto py-4 px-7 rounded-lg  cursor-pointer hover:border-2 hover:border-[#473dff] focus:bg-[#f0f6ff] mb-4  ${isSelectedFeature ? 'bg-[#f0f6ff] border-2 border-[#473dff] ' : 'border-2 border-[#d6d9e6]'}`}
+
+                        onClick={() => handleFeatureSelection(feature)}
+                      >
+                        <div className="flex justify-between items-center pb-2">
+                          <div className="flex items-center">
+
+                            <input
+                              ref={checkboxRefs[index]}
+                              type="checkbox"
+                              className="inline w-4 h-4 mr-4 cursor-pointer"
+                              checked={isSelectedFeature}
+                              onChange={() => handleFeatureSelection(feature)}
+                            />
+                            <div className="flex flex-col">
+                              <p className="text-[16px] font-[500] text-[#02295a]">
+                                {feature.feature}
+                              </p>
+                              <p className="text-[14px] text-[#9699ab]">
+                                {feature.description}
+                              </p>
+                            </div>
+                          </div>
+                          <p className="text-[14px] text-[#473dff]">{`+${CURRENCY}${feature.value}/yr`}</p>
+                        </div>
+                      </div>
+
+                    )
+                  })}
+
+                  {/* <div className="check-box mx-auto py-4 px-7 bg-white rounded-lg border-2 border-[#d6d9e6] cursor-pointer hover:border-2 hover:border-[#473dff] focus:bg-[#f0f6ff] mb-4">
                       <div className="flex justify-between items-center pb-2">
                         <div className="flex items-center">
                           <input
@@ -349,9 +446,9 @@ const Home = () => {
                         </div>
                         <p className="text-[14px] text-[#473dff]">+$10/yr</p>
                       </div>
-                    </div>
-                    {/* Checkbox  */}
-                    <div className="check-box mx-auto py-4 px-7 bg-white rounded-lg border-2 border-[#d6d9e6] cursor-pointer hover:border-2 hover:border-[#473dff] focus:bg-[#f0f6ff] mb-4">
+                    </div> */}
+                  {/* Checkbox  */}
+                  {/* <div className="check-box mx-auto py-4 px-7 bg-white rounded-lg border-2 border-[#d6d9e6] cursor-pointer hover:border-2 hover:border-[#473dff] focus:bg-[#f0f6ff] mb-4">
                       <div className="flex justify-between items-center pb-2">
                         <div className="flex items-center">
                           <input
@@ -360,18 +457,18 @@ const Home = () => {
                           />
                           <div className="flex flex-col">
                             <p className="text-[15px] font-semibold text-[#02295a]">
-                              Online Service
+                              Larger storage
                             </p>
                             <p className="text-[14px] text-[#9699ab]">
-                              Access to multiplayer games
+                              Extra 1TB of cloud save
                             </p>
                           </div>
                         </div>
-                        <p className="text-[14px] text-[#473dff]">+$10/yr</p>
+                        <p className="text-[14px] text-[#473dff]">+$20/yr</p>
                       </div>
-                    </div>
-                    {/* Checkbox  */}
-                    <div className="check-box mx-auto py-4 px-7 bg-white rounded-lg border-2 border-[#d6d9e6] cursor-pointer hover:border-2 hover:border-[#473dff] focus:bg-[#f0f6ff] mb-4">
+                    </div> */}
+                  {/* Checkbox  */}
+                  {/* <div className="check-box mx-auto py-4 px-7 bg-white rounded-lg border-2 border-[#d6d9e6] cursor-pointer hover:border-2 hover:border-[#473dff] focus:bg-[#f0f6ff] mb-4">
                       <div className="flex justify-between items-center pb-2">
                         <div className="flex items-center">
                           <input
@@ -380,17 +477,16 @@ const Home = () => {
                           />
                           <div className="flex flex-col">
                             <p className="text-[15px] font-semibold text-[#02295a]">
-                              Online Service
+                              Customizable profile
                             </p>
                             <p className="text-[14px] text-[#9699ab]">
-                              Access to multiplayer games
+                              Custom theme on your profile
                             </p>
                           </div>
                         </div>
-                        <p className="text-[14px] text-[#473dff]">+$10/yr</p>
+                        <p className="text-[14px] text-[#473dff]">+$20/yr</p>
                       </div>
-                    </div>
-                  </div>
+                    </div> */}
                 </div>
 
                 <div className="flex justify-between mt-[1.8rem]">
@@ -410,6 +506,9 @@ const Home = () => {
               </section>
 
               {/* STEP 4 */}
+
+              {console.log("STEP 4", selectedPlan, selectedValue)}
+              {selectedFeatures.forEach(item => console.log("STEP 4 selectedFeatures", item.value))}
               <section
                 className={`step4 w-[411px] h-[429px] ${step == STEP_4 ? "" : "hidden"
                   }`}
@@ -429,7 +528,9 @@ const Home = () => {
                           Advanced (Monthly)
                         </div>
                         <div>
-                          <div className="inline-block text-[14px] border-b-[2px] hover:text-[#473dff] border-[#d6d9e6] text-[#9699ab] cursor-pointer">
+                          <div className="inline-block text-[14px] border-b-[2px] hover:text-[#473dff] border-[#d6d9e6] text-[#9699ab] cursor-pointer"
+                            onClick={() => setStep(STEP_2)}
+                          >
                             Change
                           </div>
                         </div>
@@ -438,12 +539,17 @@ const Home = () => {
                         $12/mo
                       </div>
                     </div>
-                    <div className="flex justify-between mt-3">
-                      <div className="text-[14px] text-[#9699ab]">
-                        Larger storage
+
+                    {selectedFeatures.map((item, index) => (<>
+
+                      <div className="flex justify-between mt-3">
+                        <div className="text-[14px] text-[#9699ab]">
+                          {item.feature}
+                        </div>
+                        <div className="text-[14px]">+${item.value}/mo</div>
                       </div>
-                      <div className="text-[14px]">+$2/mo</div>
-                    </div>
+                    </>
+                    ))}
                   </div>
                 </div>
 
@@ -456,7 +562,7 @@ const Home = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-between mt-[7.7rem]">
+                <div className="flex justify-between mt-[3.6rem]">
                   <button
                     onClick={() => setStep(STEP_3)}
                     className="p-3 px-6 text-[#9699ab] hover:text-[#174a8b] hover:font-medium text-[15px]"
