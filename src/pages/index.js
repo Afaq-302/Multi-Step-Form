@@ -53,7 +53,6 @@ const Home = () => {
                 <div
                   className={`font-semibold text-[15px] leading-[0]  px-3 py-4 rounded-full mr-4 border-[1px] border-[#bee1fd] text-[#bee1fd] ${step == STEP_1 ? "bg-[#bee1fd] text-black" : ""
                     }`}
-                  onClick={() => setStep(STEP_1)}
                 >
                   1
                 </div>
@@ -71,7 +70,6 @@ const Home = () => {
                 <div
                   className={`font-semibold text-[15px] leading-[0] border-[1px] border-[#bee1fd] text-[#bee1fd] px-3 py-4 rounded-full mr-4 ${step == STEP_2 ? "bg-[#bee1fd] text-[black]" : ""
                     }`}
-                  onClick={() => setStep(STEP_2)}
                 >
                   2
                 </div>
@@ -89,7 +87,6 @@ const Home = () => {
                 <div
                   className={`font-semibold text-[15px] leading-[0] border-[1px] border-[#bee1fd] text-[#bee1fd] px-3 py-4 rounded-full mr-4 ${step == STEP_3 ? "bg-[#bee1fd] text-[black]" : ""
                     }`}
-                  onClick={() => setStep(STEP_3)}
                 >
                   3
                 </div>
@@ -107,7 +104,6 @@ const Home = () => {
                 <div
                   className={`font-semibold text-[15px] leading-[0] border-[1px] border-[#bee1fd] text-[#bee1fd] px-3 py-4 rounded-full mr-4 ${step == STEP_4 ? "bg-[#bee1fd] text-[black]" : ""
                     }`}
-                  onClick={() => setStep(STEP_4)}
                 >
                   4
                 </div>
