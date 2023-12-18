@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 const Home = () => {
   const [STEP_1, STEP_2, STEP_3, STEP_4, STEP_5] = [1, 2, 3, 4, 5];
   const CURRENCY = "$"
-  const [step, setStep] = useState(STEP_1);
+  const [step, setStep] = useState(STEP_2);
 
   // STEP 1 CODE
   const formik = useFormik({
@@ -34,7 +34,7 @@ const Home = () => {
 
   // STEP 2 CODE
   const [selectedPlan, setSelectedPlan] = useState('arcade');
-  const [selectedValue, setSelectedValue] = useState(9);
+  const [selectedPlanValue, setSelectedPlanValue] = useState(9);
   const [isToggled, setIsToggled] = useState(false);
 
   const plans = isToggled
@@ -50,14 +50,15 @@ const Home = () => {
     };
 
   const duration = isToggled ? 'yr' : 'mo';
+  const montlyOrYearly = isToggled ? 'Yearly' : 'Monthly';
   const handleCheckboxChange = () => {
     setIsToggled((prev) => !prev);
   };
 
   const handlePlanSelection = (plan, value) => {
     setSelectedPlan(plan);
-    setSelectedValue(value);
-    console.log("After setting", selectedPlan, selectedValue)
+    setSelectedPlanValue(value);
+    // console.log("After setting", selectedPlan, selectedPlanValue)
   };
 
   // STEP 3 CODE
@@ -74,15 +75,39 @@ const Home = () => {
 
   };
 
+
+  const featureValues = isToggled ? {
+    onlineService: 10,
+    largerStorage: 20,
+    customProfile: 20
+  } : {
+    onlineService: 1,
+    largerStorage: 2,
+    customProfile: 2
+  };
+
+  // console.log(featureValues);
+
   const featureData = [
-    { feature: 'Online service', description: 'Access to multiplayer games', value: 10 },
-    { feature: 'Larger Storage', description: 'Extra 1TB of cloud save', value: 20 },
-    { feature: 'Customizable profile', description: 'Custom theme on your profile', value: 20 },
+    { feature: 'Online service', description: 'Access to multiplayer games', value: featureValues.onlineService },
+    { feature: 'Larger Storage', description: 'Extra 1TB of cloud save', value: featureValues.largerStorage },
+    { feature: 'Customizable profile', description: 'Custom theme on your profile', value: featureValues.customProfile },
   ];
   const checkboxRefs = Array.from({ length: featureData.length }, () => React.createRef());
 
   // STEP 4 CODE
 
+  const selectedValues = selectedFeatures.map(item => item.value) || [];
+
+  let valuesTotal = selectedPlanValue;
+
+  selectedValues.forEach(value => {
+    valuesTotal += value;
+  });
+  console.log('valuesTotal', valuesTotal);
+
+  //Code to make the first letter of the selectedPlan to Capital
+  let selectedPlanName = selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1);
 
   return (
     <>
@@ -97,7 +122,7 @@ const Home = () => {
           {/* INNER CONTAINER */}
           <div className="grid grid-cols-10">
             {/* ##### SIDEBAR ##### */}
-            <div className="col-span-3   p-8 bg-[url('../../public/assets/images/bg-sidebar-desktop.svg')] bg-cover bg-no-repeat">
+            <div className="col-span-3 rounded-lg p-8 bg-[url('../../public/assets/images/bg-sidebar-desktop.svg')] bg-cover bg-no-repeat">
               <div className="flex items-center mt-0 mb-7">
                 <div
                   className={`font-semibold text-[15px] leading-[0]  px-3 py-4 rounded-full mr-4 border-[1px] border-[#bee1fd] text-[#bee1fd] ${step == STEP_1 ? "bg-[#bee1fd] text-black" : ""
@@ -399,7 +424,6 @@ const Home = () => {
                       <div
                         key={index}
                         className={`check-box mx-auto py-4 px-7 rounded-lg  cursor-pointer hover:border-2 hover:border-[#473dff] focus:bg-[#f0f6ff] mb-4  ${isSelectedFeature ? 'bg-[#f0f6ff] border-2 border-[#473dff] ' : 'border-2 border-[#d6d9e6]'}`}
-
                         onClick={() => handleFeatureSelection(feature)}
                       >
                         <div className="flex justify-between items-center pb-2">
@@ -421,7 +445,7 @@ const Home = () => {
                               </p>
                             </div>
                           </div>
-                          <p className="text-[14px] text-[#473dff]">{`+${CURRENCY}${feature.value}/yr`}</p>
+                          <p className="text-[14px] text-[#473dff]">{`+${CURRENCY}${feature.value}/${duration}`}</p>
                         </div>
                       </div>
 
@@ -489,7 +513,7 @@ const Home = () => {
                     </div> */}
                 </div>
 
-                <div className="flex justify-between mt-[1.8rem]">
+                <div className="flex justify-between mt-[1.5rem]">
                   <button
                     onClick={() => setStep(STEP_2)}
                     className="p-3 px-6 text-[#9699ab] hover:text-[#174a8b] hover:font-medium text-[15px]"
@@ -507,8 +531,8 @@ const Home = () => {
 
               {/* STEP 4 */}
 
-              {console.log("STEP 4", selectedPlan, selectedValue)}
-              {selectedFeatures.forEach(item => console.log("STEP 4 selectedFeatures", item.value))}
+              {/* {console.log("STEP 4", selectedPlanValue)} */}
+
               <section
                 className={`step4 w-[411px] h-[429px] ${step == STEP_4 ? "" : "hidden"
                   }`}
@@ -525,7 +549,7 @@ const Home = () => {
                     <div className="flex justify-between items-center pb-8 border-b-[1px] border-[#9699ab]">
                       <div className="leading-[1.2]">
                         <div className="text-[16px] text-[#02295a] font-medium">
-                          Advanced (Monthly)
+                          {selectedPlanName} ({montlyOrYearly})
                         </div>
                         <div>
                           <div className="inline-block text-[14px] border-b-[2px] hover:text-[#473dff] border-[#d6d9e6] text-[#9699ab] cursor-pointer"
@@ -536,17 +560,17 @@ const Home = () => {
                         </div>
                       </div>
                       <div className="text-[16px] text-[#02295a] font-semibold">
-                        $12/mo
+                        ${selectedPlanValue}/{duration}
                       </div>
                     </div>
 
                     {selectedFeatures.map((item, index) => (<>
 
-                      <div className="flex justify-between mt-3">
+                      <div key={index} className="flex justify-between mt-3">
                         <div className="text-[14px] text-[#9699ab]">
                           {item.feature}
                         </div>
-                        <div className="text-[14px]">+${item.value}/mo</div>
+                        <div className="text-[14px] text-[#02295a]">+${item.value}/{duration}</div>
                       </div>
                     </>
                     ))}
@@ -555,10 +579,10 @@ const Home = () => {
 
                 <div className="flex justify-between items-center mt-4 px-6">
                   <div className="text-[14px] text-[#9699ab]">
-                    Total (per month)
+                    Total (per {montlyOrYearly})
                   </div>
                   <div className="text-[20px] text-[#473dff] font-semibold">
-                    +$14/mo
+                    +${valuesTotal}/{duration}
                   </div>
                 </div>
 
